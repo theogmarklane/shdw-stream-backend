@@ -2,8 +2,9 @@
   "private": true,
   "version": "2.1.5",
   "scripts": {
-    "build": "nitro build",
+    "build": "prisma generate && nitro build",
     "dev": "nitro dev",
+    "postinstall": "prisma generate",
     "prepare": "nitro prepare",
     "preview": "node .output/server/index.mjs"
   },
