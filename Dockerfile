@@ -8,7 +8,9 @@ RUN apk add --no-cache curl openssl
 COPY package*.json ./
 # Ensure Prisma schema is available for `prisma generate` during postinstall
 COPY prisma/schema.prisma ./prisma/schema.prisma
-RUN npm install
+# Skip lifecycle scripts here (postinstall runs `prisma generate` and requires build artifacts).
+# We'll run `prisma generate` explicitly after copying the full source and build args.
+RUN npm install --ignore-scripts
 
 # 2. Copy All folders for future proofing incase of custom setups later on
 COPY . .
@@ -26,6 +28,8 @@ ARG TRAKT_CLIENT_ID
 ARG TRAKT_SECRET_ID
 
 # 4. Generate Prisma client using the build-only placeholder URL
+# Prepare Nitro to produce `.nitro/types/tsconfig.json` required by Prisma's type generation
+RUN npm run prepare
 RUN DATABASE_URL=${DATABASE_URL} npx prisma generate
 
 # 5. Build the application (it will use the ARGs above during compilation)
