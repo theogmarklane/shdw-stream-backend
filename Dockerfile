@@ -6,6 +6,8 @@ RUN apk add --no-cache curl openssl
 
 # 1. Copy dependency files first to maximize Docker layer caching
 COPY package*.json ./
+# Ensure Prisma schema is available for `prisma generate` during postinstall
+COPY prisma/schema.prisma ./prisma/schema.prisma
 RUN npm install
 
 # 2. Copy All folders for future proofing incase of custom setups later on
